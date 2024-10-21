@@ -3,6 +3,7 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const colors = require('colors')
 const mongoose = require('mongoose');
+const authRoutes = require('./routes/Signup');
 const morgan = require( 'morgan' )
 // DOTENV
 dotenv.config()
@@ -13,14 +14,7 @@ app.use (cors());
 app.use(express.json( ));
 app.use (morgan ("dev"));
 
-app.get("", (req, res) => {
-
-    res.status(200).json({
-
-        success: true,
-        message: "Welcome to My app",
-}) 
-});
+app.use('/signup', authRoutes);
 
 async function connect() {
     try {
