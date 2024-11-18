@@ -1,10 +1,33 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import axios from 'axios';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignup = async () => {
+    try {
+      // Define the API endpoint for signup
+      const response = await axios.post('http://localhost:8000/signup', {
+        fullName,
+        email,
+        password,
+      });
+
+      if (response.status === 201) {
+        Alert.alert('Success', 'Account created successfully!');
+        // Navigate to sign-in page or another screen if needed
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Signup failed. Please try again.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -26,6 +49,8 @@ export default function Register() {
               placeholder="Full Name"
               style={styles.input}
               autoCapitalize="words"
+              value={fullName}
+              onChangeText={setFullName} // Update fullName state
             />
           </View>
           <TextInput
@@ -33,6 +58,8 @@ export default function Register() {
             style={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail} // Update email state
           />
           <View style={styles.passwordContainer}>
             <TextInput
@@ -40,6 +67,8 @@ export default function Register() {
               style={styles.input}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
+              value={password}
+              onChangeText={setPassword} // Update password state
             />
             <TouchableOpacity
               style={styles.eyeIcon}
@@ -54,7 +83,7 @@ export default function Register() {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
           <Text style={styles.buttonText}>Sign up</Text>
           <Ionicons name="chevron-forward" size={20} color="white" />
         </TouchableOpacity>
@@ -62,7 +91,7 @@ export default function Register() {
         {/* Sign in link */}
         <TouchableOpacity style={styles.signInLink}>
           <Link href={"/SignIn"}>
-          <Text style={styles.signInText}>Already have an account? <Text style={styles.signInButtonText}>Sign in</Text></Text>
+            <Text style={styles.signInText}>Already have an account? <Text style={styles.signInButtonText}>Sign in</Text></Text>
           </Link>
         </TouchableOpacity>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import SignIn from './SignIn';
+import Component from './Component';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {

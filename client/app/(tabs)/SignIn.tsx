@@ -1,11 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
+import axios from 'axios';
 
 export default function SignIn() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in both email and password.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/signin', {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        const { token, user } = response.data;
+
+        // Save the token to local storage or AsyncStorage for later use
+        // Example: AsyncStorage.setItem('token', token);
+
+        // Pass user data (email and fullName) as query params to ProfilePage
+        router.push({
+          pathname: '/(tabs)/Component',  // Use the correct path to the ProfilePage
+          params: { email: user.email, fullName: user.fullName },  // Pass params here
+        });
+
+      }
+    } catch (error) {
+      Alert.alert('Login Failed', 'An error occurred. Please try again.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -28,6 +62,8 @@ export default function SignIn() {
             style={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
           />
           <View style={styles.passwordContainer}>
             <TextInput
@@ -35,6 +71,8 @@ export default function SignIn() {
               style={styles.input}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity
               style={styles.eyeIcon}
@@ -49,18 +87,19 @@ export default function SignIn() {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSignIn}>
           <Text style={styles.buttonText}>Sign in</Text>
           <Ionicons name="chevron-forward" size={20} color="white" />
         </TouchableOpacity>
 
         {/* Sign up link */}
         <TouchableOpacity style={styles.signInLink}>
-            <Link href={"/Register"}>
-          <Text style={styles.signInText}>Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text></Text>
+          <Link href="/Register">
+            <Text style={styles.signInText}>
+              Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text>
+            </Text>
           </Link>
         </TouchableOpacity>
-
       </View>
     </View>
   );
