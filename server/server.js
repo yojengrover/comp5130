@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const colors = require('colors')
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/Signup');
+const signInRoutes = require('./routes/SignIn');
 const morgan = require( 'morgan' )
 // DOTENV
 dotenv.config()
@@ -15,6 +16,7 @@ app.use(express.json( ));
 app.use (morgan ("dev"));
 
 app.use('/signup', authRoutes);
+app.use('/signin', signInRoutes);
 
 async function connect() {
     try {
