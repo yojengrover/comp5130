@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link, useRouter } from 'expo-router';
-
 import axios from 'axios';
+import Component from './Component';
 
-export default function SignIn() {
+const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [userDetails, setUserDetails] = useState({ name: '', email: '' }); // State to store user details
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -26,21 +26,25 @@ export default function SignIn() {
       if (response.status === 200) {
         const { token, user } = response.data;
 
-        // Save the token to local storage or AsyncStorage for later use
-        // Example: AsyncStorage.setItem('token', token);
+        const userDetails = {
+          name: user.fullName,
+          email: user.email,
+        };
 
-        // Pass user data (email and fullName) as query params to ProfilePage
-        router.push({
-          pathname: '/(tabs)/Component',  // Use the correct path to the ProfilePage
-          params: { email: user.email, fullName: user.fullName },  // Pass params here
-        });
-
+        setUserDetails(userDetails); // Save user details
+        setIsLoggedIn(true); // Mark as logged in
       }
     } catch (error) {
       Alert.alert('Login Failed', 'An error occurred. Please try again.');
     }
   };
 
+  // Render `Component` if the user is logged in
+  if (isLoggedIn && userDetails.name && userDetails.email) {
+    return <Component user={userDetails} />;
+  }
+
+  // Otherwise, render the SignIn screen
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
@@ -79,7 +83,7 @@ export default function SignIn() {
               onPress={() => setShowPassword(!showPassword)}
             >
               <Ionicons
-                name={showPassword ? "eye-off" : "eye"}
+                name={showPassword ? 'eye-off' : 'eye'}
                 size={24}
                 color="gray"
               />
@@ -94,16 +98,15 @@ export default function SignIn() {
 
         {/* Sign up link */}
         <TouchableOpacity style={styles.signInLink}>
-          <Link href="/Register">
-            <Text style={styles.signInText}>
-              Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text>
-            </Text>
-          </Link>
+          <Text style={styles.signInText}>
+            Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text>
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-}
+};
+
 
 const styles = StyleSheet.create({
   container: {
@@ -185,3 +188,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default SignIn;

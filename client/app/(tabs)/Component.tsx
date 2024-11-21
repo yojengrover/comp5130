@@ -2,13 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 
-export default function Component() {
+interface ComponentProps {
+  user: {
+    name: string;
+    email: string;
+  };
+}
+
+const Component: React.FC<ComponentProps> = ({ user }) => {
   const router = useRouter();
  // const { email, fullName } = router.params || {} // Extract email and fullName from query params
 
-  const [user, setUser] = useState({
-    // name: fullName || 'Default Name', // Set default or received name
-    // email: email || 'Default Email',
+  const [loggedUser, setUser] = useState({
+    name: user.name || 'Default Name', // Set default or received name
+    email: user.email || 'Default Email',
     avatarUrl: 'https://i.pravatar.cc/300',
   });
 
@@ -39,10 +46,10 @@ export default function Component() {
       <ScrollView style={styles.content}>
         {/* User Card */}
         <View style={styles.card}>
-          <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
+          <Image source={{ uri: loggedUser.avatarUrl }} style={styles.avatar} />
           <View style={styles.userInfo}>
-            {/* <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userEmail}>{user.email}</Text> */}
+            <Text style={styles.userName}>{user.name}</Text>
+            <Text style={styles.userEmail}>{user.email}</Text> 
           </View>
         </View>
 
@@ -155,3 +162,4 @@ const styles = StyleSheet.create({
     color: '#aaa',
   },
 });
+export default Component;
