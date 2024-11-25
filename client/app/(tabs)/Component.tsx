@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
+import axios from 'axios';
 
 interface ComponentProps {
   user: {
@@ -11,13 +12,42 @@ interface ComponentProps {
 
 const Component: React.FC<ComponentProps> = ({ user }) => {
   const router = useRouter();
- // const { email, fullName } = router.params || {} // Extract email and fullName from query params
-
+  
   const [loggedUser, setUser] = useState({
-    name: user.name || 'Default Name', // Set default or received name
+    name: user.name || 'Default Name',
     email: user.email || 'Default Email',
     avatarUrl: 'https://i.pravatar.cc/300',
   });
+
+  const [emailInput, setEmailInput] = useState('');
+  const [message, setMessage] = useState('Welcome to your profile!');
+
+  const handleSendMessage = async () => {
+    if (message.trim()) {
+      try {
+        const response = await axios.post('https://your-backend-api-url.com/messages', {
+          message,
+        });
+        setMessage(''); // Clear the message input after sending
+        alert('Message sent successfully!');
+      } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Failed to send message. Please try again.');
+      }
+    } else {
+      alert('Please enter a message to send.');
+    }
+  };
+
+  const handleEmailChange = () => {
+    if (emailInput.trim()) {
+      setUser((prev) => ({ ...prev, email: emailInput.trim() }));
+      setMessage(`Email updated to: ${emailInput.trim()}`);
+      setEmailInput('');
+    } else {
+      setMessage('Please enter a valid email.');
+    }
+  };
 
   const menuItems = [
     { icon: '⚙️', label: 'Account settings' },
@@ -48,10 +78,35 @@ const Component: React.FC<ComponentProps> = ({ user }) => {
         <View style={styles.card}>
           <Image source={{ uri: loggedUser.avatarUrl }} style={styles.avatar} />
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userEmail}>{user.email}</Text> 
+            <Text style={styles.userName}>{loggedUser.name}</Text>
+            <Text style={styles.userEmail}>{loggedUser.email}</Text> 
           </View>
         </View>
+
+       
+
+        {/* Email Input Box */}
+        <View style={styles.inputBox}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter new email"
+            value={emailInput}
+            onChangeText={setEmailInput}
+          />
+        </View>
+        <View style={styles.messageBox}>
+  <TextInput
+    style={styles.messageTextInput}
+    value={message}
+    onChangeText={(text) => setMessage(text)} // Update the message state dynamically
+    multiline={true} // Allow multi-line input
+    placeholder="Type your message here"
+  />
+  {/* Send Button */}
+  <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+    <Text style={styles.sendButtonText}>Send</Text>
+  </TouchableOpacity>
+</View>
 
         {/* Menu */}
         <View style={styles.menu}>
@@ -66,7 +121,7 @@ const Component: React.FC<ComponentProps> = ({ user }) => {
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -96,9 +151,39 @@ const styles = StyleSheet.create({
   bellIcon: {
     fontSize: 24,
   },
+  messageBox: {
+    backgroundColor: '#e9ecef',
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 16,
+  },
+  messageTextInput: {
+    fontSize: 14,
+    color: '#495057',
+    padding: 8,
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    textAlignVertical: 'top', // Align text properly in multi-line inputs
+    minHeight: 50, // Set a minimum height for better appearance
+  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 16,
+  },
+  sendButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  sendButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   card: {
     flexDirection: 'row',
@@ -131,6 +216,45 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
+  messageText: {
+    fontSize: 14,
+    color: '#495057',
+  },
+  inputBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    marginRight: 8,
+    fontSize: 14,
+  },
+  updateButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  updateButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   menu: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -162,4 +286,5 @@ const styles = StyleSheet.create({
     color: '#aaa',
   },
 });
+
 export default Component;
