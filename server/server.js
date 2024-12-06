@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/Signup');
 const signInRoutes = require('./routes/SignIn');
 const messageSaveRoute = require('./routes/MessageHandling')
+const messageRoutes = require('./routes/MessageFtechandDelete');
 const morgan = require( 'morgan' )
 // DOTENV
 dotenv.config()
@@ -19,6 +20,8 @@ app.use (morgan ("dev"));
 app.use('/signup', authRoutes);
 app.use('/signin', signInRoutes);
 app.use('/sendmessage', messageSaveRoute);
+app.use('/message', messageRoutes);
+
 
 async function connect() {
     try {
