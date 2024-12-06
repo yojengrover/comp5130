@@ -1,19 +1,17 @@
 const express = require('express');
-const nodemailer = require('nodemailer'); // For sending emails
+const nodemailer = require('nodemailer');
 const Message = require('../model/Message'); // Import the Message model
 const router = express.Router();
 
-// Route to save a message and send a custom email
 router.post('/', async (req, res) => {
   const { sender, receiver, messageContent, timestamp } = req.body;
 
-  // Validate required fields
   if (!sender || !receiver || !messageContent || !timestamp) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    // Create a new message in the database
+    // Save message to the database
     const newMessage = new Message({
       sender,
       receiver,
@@ -21,27 +19,29 @@ router.post('/', async (req, res) => {
       timestamp,
     });
 
-    // Save to database
     const savedMessage = await newMessage.save();
 
-    // Generate a custom link (e.g., `http://yourdomain.com/message/<id>`)
-    const messageLink = `http://yourdomain.com/message/${savedMessage._id}`;
-
-    // Configure the Nodemailer transporter
-    
-const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
+    const messageLink = `http://localhost:8000/message/${savedMessage._id}`;
+    console.log('Generated message link:', messageLink);
+  
+    // Configure Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      auth: {
         user: 'isaac.botsford@ethereal.email',
-        pass: 'JWJgu2EeRU7uayUytC'
-    }
-});
-
+        pass: 'JWJgu2EeRU7uayUytC',
+      },
+    });
+  
+    // Verify SMTP connection
+    await transporter.verify();
+    console.log('SMTP server is ready to send emails.');
+  
     // Email options
     const mailOptions = {
-      from: `"${sender}" <your-email@gmail.com>`, // Sender name and email
-      to: receiver, // Receiver email
+      from: `"${sender}" <no-reply@yourdomain.com>`,
+      to: receiver,
       subject: 'You have a new private message',
       html: `
         <h1>You have a new message!</h1>
@@ -50,18 +50,19 @@ const transporter = nodemailer.createTransport({
         <a href="${messageLink}" target="_blank">${messageLink}</a>
       `,
     };
-
+  
     // Send the email
-    await transporter.sendMail(mailOptions);
-
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent:', info.messageId);
+  
     res.status(201).json({
       message: 'Message saved and email sent successfully',
       data: savedMessage,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error occurred:', error);
     res.status(500).json({ error: 'Failed to save message or send email' });
   }
-});
+})
 
 module.exports = router;
