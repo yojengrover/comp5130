@@ -29,12 +29,6 @@ router.post('/', async (req, res) => {
 
     // Save user to the database
     await user.save();
-
-    // Create JWT token
-    // const payload = { userId: user._id };
-    // const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '1h' }); // Use env variable for secret in production
-
-    // // Send the token to the client
      res.status(201).json({ msg:"signup successfull" });
   } catch (error) {
     console.error(error.message);
