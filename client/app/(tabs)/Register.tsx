@@ -3,31 +3,42 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import axios from 'axios';
+import GoogleOTP from './GoogleOTP';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showOTP, setShowOTP] = useState(false); // State to toggle between Register and OTP screen
+  const [userDetails, setUserDetails] = useState({fullName:'', password: '', email: ''}); // Store user details to pass to OTP component
 
   const handleSignup = async () => {
     try {
-      // Define the API endpoint for signup
-      const response = await axios.post('http://localhost:8000/signup', {
-        fullName,
-        email,
-        password,
+      // Send a request to generate OTP
+      const response = await axios.post('http://localhost:8000/generate-otp', {
+        email, // Pass email from state or props
       });
-
-      if (response.status === 201) {
-        Alert.alert('Success', 'Account created successfully!');
-        // Navigate to sign-in page or another screen if needed
+  
+      if (response.status === 200) {
+        Alert.alert('OTP Sent!', 'Please check your email for the OTP.');
+  
+        // Store the user details locally for later use
+        setUserDetails({ fullName, email, password }); 
+        setShowOTP(true); // Show the OTP input component
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Signup failed. Please try again.');
+      Alert.alert('Error', 'Failed to send OTP. Please try again.');
     }
   };
+  
+  
+
+  // If `showOTP` is true, render the `GoogleOTP` component
+  if (showOTP && userDetails) {
+    return <GoogleOTP user={userDetails} />;
+  }
 
   return (
     <View style={styles.container}>

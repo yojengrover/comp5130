@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import Component from './Component';
+import { Link } from 'expo-router';  // Keep the Link for navigation
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Component from './Component'; // Component to show after successful login
+import NotificationScreen from './NotificationScreen'; // Import the Notification component
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
-  const [userDetails, setUserDetails] = useState({ name: '', email: '' }); // State to store user details
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userDetails, setUserDetails] = useState({ name: '', email: '' });
+  const [notification, setNotification] = useState({ message: '', type: false });
 
+  // Function to handle login
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in both email and password.');
+      setNotification({ message: 'Please fill in both email and password.', type: false });
       return;
     }
 
@@ -26,25 +31,42 @@ const SignIn = () => {
       if (response.status === 200) {
         const { token, user } = response.data;
 
-        const userDetails = {
-          name: user.fullName,
-          email: user.email,
-        };
+        // Save the token securely
+        await AsyncStorage.setItem('authToken', token);
 
-        setUserDetails(userDetails); // Save user details
-        setIsLoggedIn(true); // Mark as logged in
+        // Update user details and login state
+        setUserDetails({ name: user.fullName, email: user.email });
+        setIsLoggedIn(true);
+        setNotification({ message: 'Login successful!', type: true });
       }
     } catch (error) {
-      Alert.alert('Login Failed', 'An error occurred. Please try again.');
+      console.error('Login Error:', error);
+      setNotification({ message: 'Login failed. Invalid credentials or server error.', type: false });
     }
   };
 
-  // Render `Component` if the user is logged in
-  if (isLoggedIn && userDetails.name && userDetails.email) {
-    return <Component user={userDetails} />;
+  // Automatically hide the notification after 2 seconds
+  useEffect(() => {
+    if (notification.message) {
+      const timer = setTimeout(() => {
+        setNotification({ message: '', type: false }); // Reset notification state
+      }, 3000); // 2000ms = 2 seconds
+
+      // Cleanup the timer when the component is unmounted or the notification changes
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  // If logged in, show the full success screen with the "Continue" button
+  if (isLoggedIn) {
+    return (
+      <Component
+        user={userDetails}
+        isLoggedIn={isLoggedIn}
+      />
+    );
   }
 
-  // Otherwise, render the SignIn screen
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
@@ -64,7 +86,7 @@ const SignIn = () => {
           <TextInput
             placeholder="Email address"
             style={styles.input}
-            keyboardType="email-address"
+            inputMode="email" // Use inputMode instead of keyboardType
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
@@ -78,7 +100,7 @@ const SignIn = () => {
               value={password}
               onChangeText={setPassword}
             />
-            <TouchableOpacity
+            <Pressable
               style={styles.eyeIcon}
               onPress={() => setShowPassword(!showPassword)}
             >
@@ -87,27 +109,34 @@ const SignIn = () => {
                 size={24}
                 color="gray"
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+        <Pressable style={styles.button} onPress={handleSignIn}>
           <Text style={styles.buttonText}>Sign in</Text>
           <Ionicons name="chevron-forward" size={20} color="white" />
-        </TouchableOpacity>
+        </Pressable>
 
-        {/* Sign up link */}
-        <TouchableOpacity style={styles.signInLink}>
-          <Text style={styles.signInText}>
-            Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text>
-          </Text>
-        </TouchableOpacity>
+        <Pressable style={styles.signInLink}>
+          <Link href="/Register">
+            <Text style={styles.signInText}>Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text></Text>
+          </Link>
+        </Pressable>
       </View>
+
+      {/* Show notification message */}
+      {notification.message && !isLoggedIn && (
+        <NotificationScreen
+          message={notification.message}
+          type={notification.type}
+        />
+      )}
     </View>
   );
 };
 
-
+// Styles for the component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -128,7 +157,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: 'bold',
-    flexDirection: 'row',
   },
   googleRed: { color: '#DB4437' },
   googleBlue: { color: '#4285F4' },
@@ -149,8 +177,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#ddd',
     borderWidth: 1,
-    flex: 1,
-    marginRight: 8,
     marginBottom: 16,
   },
   passwordContainer: {
