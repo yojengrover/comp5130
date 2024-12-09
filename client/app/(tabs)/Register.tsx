@@ -169,19 +169,22 @@ const styles = StyleSheet.create({
     right: 16,
   },
   button: {
-    backgroundColor: '#4285F4',
+    backgroundColor: 'white', // White background
     padding: 16,
     borderRadius: 8,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 0.5, // Thinner border
+    borderColor: '#A9A9A9', // Greyish border color
   },
   buttonText: {
-    color: 'white',
+    color: 'black', // Black text color
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500', // Lighter font weight
     marginRight: 8,
   },
+  
   signInLink: {
     marginTop: 16,
     alignItems: 'center',

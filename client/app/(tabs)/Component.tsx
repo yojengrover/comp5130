@@ -174,8 +174,19 @@ const styles = StyleSheet.create({
   googleE: { color: '#DB4437' },
   bellIcon: { fontSize: 24, marginRight: 16 },
   headerActions: { flexDirection: 'row', alignItems: 'center' },
-  logoutButton: { padding: 8, backgroundColor: '#dc3545', borderRadius: 4 },
-  logoutText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  logoutButton: {
+    backgroundColor: 'white', // White background
+    padding: 8,
+    borderRadius: 4,
+    borderWidth: 0.5, // Thin border
+    borderColor: '#A9A9A9', // Slightly greyish border
+    alignItems: 'center', // Center-align text
+  },
+  logoutText: {
+    color: 'black', // Black text color
+    fontWeight: '500', // Medium-light font weight
+    fontSize: 14, // Font size
+  },
   content: { padding: 16 },
   card: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 8, padding: 16, marginBottom: 16 },
   avatar: { width: 64, height: 64, borderRadius: 32, marginRight: 16 },
@@ -185,8 +196,20 @@ const styles = StyleSheet.create({
   messageBox: { marginVertical: 16 },
   input: { height: 40, borderColor: '#ddd', borderWidth: 1, borderRadius: 4, padding: 8, marginBottom: 8 },
   messageTextInput: { height: 100, borderColor: '#ddd', borderWidth: 1, borderRadius: 4, padding: 8, textAlignVertical: 'top', marginBottom: 8 },
-  sendButton: { backgroundColor: '#007bff', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 4, alignItems: 'center' },
-  sendButtonText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  sendButton: {
+    backgroundColor: 'white', // White background
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 4,
+    alignItems: 'center',
+    borderWidth: 0.5, // Thinner border
+    borderColor: '#A9A9A9', // Slightly greyish border
+  },
+  sendButtonText: {
+    color: 'black', // Black text color
+    fontSize: 14, // Font size
+    fontWeight: '500', // Medium-light font weight
+  },
 });
 
 export default Component;
