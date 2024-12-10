@@ -69,7 +69,7 @@ const SignIn = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.formContainer}>
+        <View style={styles.formContainer}>
         <View style={styles.header}>
           <Text style={styles.title}>
             <Text style={styles.googleRed}>P</Text>
@@ -86,7 +86,7 @@ const SignIn = () => {
           <TextInput
             placeholder="Email address"
             style={styles.input}
-            inputMode="email" // Use inputMode instead of keyboardType
+            inputMode="email"
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
@@ -94,7 +94,7 @@ const SignIn = () => {
           <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
-              style={[styles.input, { flex: 1 }]} 
+              style={[styles.input, { flex: 1 }]}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
               value={password}
@@ -120,7 +120,10 @@ const SignIn = () => {
 
         <Pressable style={styles.signInLink}>
           <Link href="/Register">
-            <Text style={styles.signInText}>Don't have an account? <Text style={styles.signInButtonText}>Sign up</Text></Text>
+            <Text style={styles.signInText}>
+              Don't have an account?{' '}
+              <Text style={styles.signInButtonText}>Sign up</Text>
+            </Text>
           </Link>
         </Pressable>
       </View>

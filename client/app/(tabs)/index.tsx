@@ -5,14 +5,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Component from './Component';
 import { Ionicons } from '@expo/vector-icons';
+import { MyTheme } from './MyTheme'; // Import your theme
 
 const Stack = createStackNavigator();
+
 
 export default function HomeScreen() {
 
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <Stack.Navigator initialRouteName="SignIn">
       <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="Component" component={Component} />
@@ -20,4 +22,4 @@ export default function HomeScreen() {
     </NavigationContainer>
   );
   }
-
+ 
