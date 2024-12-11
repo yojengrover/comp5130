@@ -28,6 +28,11 @@ const SignIn = () => {
         password,
       });
 
+          // const response = await axios.post('http://10.0.2.2:8000/signin', {
+          //   email,
+          //   password,
+          // });
+
       if (response.status === 200) {
         const { token, user } = response.data;
 

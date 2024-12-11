@@ -14,6 +14,15 @@ export default function Register() {
   const [userDetails, setUserDetails] = useState({fullName:'', password: '', email: ''}); // Store user details to pass to OTP component
 
   const handleSignup = async () => {
+    // Regular expression for validating email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    // Check if the email is valid
+    if (!email || !emailRegex.test(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+  
     try {
       // Send a request to generate OTP
       const response = await axios.post('http://localhost:8000/generate-otp', {
@@ -24,7 +33,7 @@ export default function Register() {
         Alert.alert('OTP Sent!', 'Please check your email for the OTP.');
   
         // Store the user details locally for later use
-        setUserDetails({ fullName, email, password }); 
+        setUserDetails({ fullName, email, password });
         setShowOTP(true); // Show the OTP input component
       }
     } catch (error) {
@@ -32,6 +41,7 @@ export default function Register() {
       Alert.alert('Error', 'Failed to send OTP. Please try again.');
     }
   };
+  
   
   
 

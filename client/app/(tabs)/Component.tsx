@@ -57,43 +57,62 @@ const Component: React.FC<ComponentProps> = ({ user, isLoggedIn }) => {
   };
 
   const handleSendMessage = async () => {
-    if (message.trim() && emailInput.trim()) {
-      try {
-        const response = await axios.post('http://localhost:8000/sendmessage', {
-          sender: loggedUser.email,
-          receiver: emailInput.trim(),
-          messageContent: message.trim(),
-          timestamp: new Date().toISOString(),
-        });
-        setMessage('');
-        setEmailInput('');
-        
-        // Display success notification
-        setNotification({ message: 'Message sent successfully!', type: true });
-
-        // Hide the notification after 3 seconds
-        setTimeout(() => {
-          setNotification({ message: '', type: true });
-        }, 3000);
-      } catch (error) {
-        console.error('Error sending message:', error);
-        // Display error notification
-        setNotification({ message: 'Failed to send message. Please try again.', type: false });
-
-        // Hide the notification after 3 seconds
-        setTimeout(() => {
-          setNotification({ message: '', type: false });
-        }, 3000);
-      }
-    } else {
-      setNotification({ message: 'Please enter both a valid receiver email and message.', type: false });
-
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    // Check if the email and message are valid
+    if (!emailInput.trim() || !emailRegex.test(emailInput.trim())) {
+      setNotification({ message: 'Please enter a valid receiver email.', type: false });
+  
+      // Hide the notification after 3 seconds
+      setTimeout(() => {
+        setNotification({ message: '', type: false });
+      }, 3000);
+      return;
+    }
+  
+    if (!message.trim()) {
+      setNotification({ message: 'Please enter a message.', type: false });
+  
+      // Hide the notification after 3 seconds
+      setTimeout(() => {
+        setNotification({ message: '', type: false });
+      }, 3000);
+      return;
+    }
+  
+    try {
+      const response = await axios.post('http://10.0.2.2:8000/sendmessage', {
+        sender: loggedUser.email,
+        receiver: emailInput.trim(),
+        messageContent: message.trim(),
+        timestamp: new Date().toISOString(),
+      });
+  
+      // Reset input fields
+      setMessage('');
+      setEmailInput('');
+  
+      // Display success notification
+      setNotification({ message: 'Message sent successfully!', type: true });
+  
+      // Hide the notification after 3 seconds
+      setTimeout(() => {
+        setNotification({ message: '', type: true });
+      }, 3000);
+    } catch (error) {
+      console.error('Error sending message:', error);
+  
+      // Display error notification
+      setNotification({ message: 'Failed to send message. Please try again.', type: false });
+  
       // Hide the notification after 3 seconds
       setTimeout(() => {
         setNotification({ message: '', type: false });
       }, 3000);
     }
   };
+  
 
   return (
     <View style={styles.container}>
