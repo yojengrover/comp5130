@@ -111,8 +111,9 @@ const GoogleOTP: React.FC<GoogleOTPProps> = ({ user }) => {
         buttonColor="#4285F4"
         textColor="#FFF"
         style={styles.verifyButton}
-      >
+      ><Text style={styles.buttonText} >
         Verify
+        </Text>
       </Button>
 
       {/* Display the notification */}
@@ -167,10 +168,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#333",
   },
+  buttonText: {
+    color: 'black', // Black text color
+    fontSize: 16,
+    fontWeight: '500', // Lighter font weight
+    marginRight: 8,
+  },
   verifyButton: {
-    width: "100%",
-    paddingVertical: 10,
-    borderRadius: 10,
+    backgroundColor: 'white', // White background
+    
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.5, // Thinner border
+    borderColor: '#A9A9A9',
+    color: 'black', // Black text color
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
 

@@ -25,7 +25,7 @@ export default function Register() {
   
     try {
       // Send a request to generate OTP
-      const response = await axios.post('http://localhost:8000/generate-otp', {
+      const response = await axios.post('http://10.0.2.2:8000/generate-otp', {
         email, // Pass email from state or props
       });
   
@@ -74,14 +74,16 @@ export default function Register() {
               onChangeText={setFullName} // Update fullName state
             />
           </View>
+          <View>
           <TextInput
-            placeholder="Email address"
-            style={styles.input}
-            keyboardType="email-address"
+            placeholder="Email"
+            style={styles.emailInput}
+            //keyboardType="email-address"
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail} // Update email state
           />
+          </View>
           <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
@@ -169,7 +171,16 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
     marginBottom: 16,
+    textAlignVertical: 'center'
   },
+    emailInput: {
+      backgroundColor: '#f1f1f1',
+      padding: 12,
+      borderRadius: 8,
+      borderColor: '#ddd',
+      borderWidth: 1,
+      marginBottom: 16,
+    },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
